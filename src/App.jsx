@@ -39,8 +39,7 @@ function App() {
     e.preventDefault();
     const endpoint = authMode === 'login' ? 'login' : 'register';
     try {
-      //const res = await fetch(`http://localhost:8080/api/auth/${endpoint}`, {
-      //const res = await fetch(`http://192.168.1.118:8080/api/auth/${endpoint}`, {
+      // Usamos /api/auth solo para login y registro
       const res = await fetch(`https://mediavault-api.onrender.com/api/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -81,15 +80,17 @@ function App() {
 
   const cargarDatos = () => {
     if (!token) return;
-    // CORRECCIÓN: 'games' en lugar de 'videogame' para coincidir con el Controller
+    // Corregido: Las rutas de datos no llevan /auth/
     const endpoint = sector === 'movies' ? 'media' : sector === 'music' ? 'music' : 'games';
-    //fetch(`http://localhost:8080/api/${endpoint}`, {
-    //fetch(`http://192.168.1.118:8080/api/${endpoint}`, {
-    fetch(`https://mediavault-api.onrender.com/api/auth/${endpoint}`, {
+    
+    fetch(`https://mediavault-api.onrender.com/api/${endpoint}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(res => res.json())
-      .then(data => setItems(data))
+      .then(res => {
+        if (!res.ok) throw new Error("No autorizado");
+        return res.json();
+      })
+      .then(data => setItems(Array.isArray(data) ? data : []))
       .catch(() => setItems([]));
   };
 
@@ -186,12 +187,10 @@ function App() {
 
   const guardarElemento = (e) => {
     e.preventDefault();
-    // CORRECCIÓN: 'games' para coincidir con Java
     const endpoint = sector === 'movies' ? 'media' : sector === 'music' ? 'music' : 'games';
     let objetoGuardar = { title, status, comments };
     
     if (sector === 'movies') {
-      // CORRECCIÓN: Mapeo de campos para Media.java
       Object.assign(objetoGuardar, { 
         director: autor, 
         imageUrl: datosAuto?.poster || PLACEHOLDER, 
@@ -205,9 +204,10 @@ function App() {
       Object.assign(objetoGuardar, { developer: autor, imageUrl: datosAuto?.poster || PLACEHOLDER, releaseYear: datosAuto?.year || 0, description: description });
     }
 
-    //const url = idEditando ? `http://localhost:8080/api/${endpoint}/${idEditando}` : `http://localhost:8080/api/${endpoint}`;
-    //const url = idEditando ? `http://192.168.1.118:8080/api/${endpoint}/${idEditando}` : `http://192.168.1.118:8080/api/${endpoint}`;
-    const url = idEditando ? `https://mediavault-api.onrender.com/api/auth/${endpoint}/${idEditando}` : `https://mediavault-api.onrender.com/api/auth/${endpoint}`;
+    // Corregido: La ruta de guardado no lleva /auth/
+    const baseUrl = `https://mediavault-api.onrender.com/api/${endpoint}`;
+    const url = idEditando ? `${baseUrl}/${idEditando}` : baseUrl;
+    
     fetch(url, {
       method: idEditando ? 'PUT' : 'POST',
       headers: { 
@@ -221,9 +221,8 @@ function App() {
   const borrarElemento = (id) => {
     const endpoint = sector === 'movies' ? 'media' : sector === 'music' ? 'music' : 'games';
     if (window.confirm("¿Estás seguro de que quieres borrarlo?")) {
-      //fetch(`http://localhost:8080/api/${endpoint}/${id}`, { 
-      //fetch(`http://192.168.1.118:8080/api/${endpoint}/${id}`, { 
-      fetch(`https://mediavault-api.onrender.com/api/auth/${endpoint}/${id}`, { 
+      // Corregido: La ruta de borrar no lleva /auth/
+      fetch(`https://mediavault-api.onrender.com/api/${endpoint}/${id}`, { 
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       }).then(() => cargarDatos());
@@ -237,7 +236,6 @@ function App() {
     setDatosAuto({ poster: item.imageUrl, year: item.releaseYear });
   };
 
-  // --- RENDERIZADO CONDICIONAL: LOGIN ---
   if (!token) {
     return (
       <div className="app-container" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh'}}>
