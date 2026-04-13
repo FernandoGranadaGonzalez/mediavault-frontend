@@ -293,7 +293,7 @@ function App() {
           <h2>{idEditando ? "✏️ Editando" : sector === 'movies' ? "➕ Añadir Película/Serie" : sector === 'music' ? "➕ Añadir Disco" : "➕ Añadir Juego"}</h2>
           <form onSubmit={guardarElemento}>
             <div className="input-box">
-              <label>Título:</label>
+              <label>Título</label>
               <input type="text" value={title} onChange={manejarCambioTitulo} required autoComplete="off" />
               {mostrarSugerencias && sugerencias.length > 0 && (
                 <ul className="suggestions-list">
@@ -307,7 +307,7 @@ function App() {
               )}
             </div>
             <div className="form-row">
-              <div className="input-box"><label>Estado:</label>
+              <div className="input-box"><label>Estado</label>
                 <select value={status} onChange={(e) => setStatus(e.target.value)}>
                   <option value="Pendiente">Pendiente</option>
                   <option value="En progreso">{sector === 'movies' ? 'Viendo' : sector === 'music' ? 'Escuchando' : 'Jugando'}</option>
@@ -316,7 +316,7 @@ function App() {
               </div>
               <div className="input-box"><label>Año</label><div className="display-data">{datosAuto?.year || "---"}</div></div>
             </div>
-            <div className="input-box"><label>Comentarios:</label><textarea value={comments} onChange={(e) => setComments(e.target.value)} /></div>
+            <div className="input-box"><label>Comentarios</label><textarea value={comments} onChange={(e) => setComments(e.target.value)} /></div>
             <div style={{display: 'flex', gap: '15px'}}>
               <button type="submit" className="btn-save">{idEditando ? 'Actualizar' : 'Guardar'}</button>
               {idEditando && <button type="button" className="btn-save" style={{background: '#aaa'}} onClick={limpiarFormulario}>Cancelar</button>}
