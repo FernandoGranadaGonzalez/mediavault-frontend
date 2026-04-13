@@ -276,8 +276,8 @@ function App() {
             <button className={sector === 'games' ? 'tab active' : 'tab'} onClick={() => {setSector('games'); limpiarFormulario();}}>🎮 JUEGOS</button>
           </nav>
           <div className="nav-search" style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
-            <span style={{color: 'white', fontWeight: 'bold'}}>Hi, {username}!</span>
-            <button onClick={logout} style={{background: 'var(--red)', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', fontFamily: 'Bebas Neue'}}>LOGOUT</button>
+            <span style={{color: 'white', fontWeight: 'bold'}}>¡Hola, {username}!</span>
+            <button onClick={logout} style={{background: 'var(--red)', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', fontFamily: 'Bebas Neue'}}>CERRAR SESIÓN</button>
           </div>
         </div>
       </header>
